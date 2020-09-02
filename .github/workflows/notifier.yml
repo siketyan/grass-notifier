@@ -7,6 +7,10 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      USERNAME: ${{ secrets.USERNAME }}
+      MESSAGE: ${{ secrets.MESSAGE }}
+      WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
     steps:
       - run: |
           HTML="$(curl -sSL "https://github.com/${USERNAME}")"
