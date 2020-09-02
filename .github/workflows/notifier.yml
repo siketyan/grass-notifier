@@ -1,0 +1,25 @@
+name: Notifier
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          HTML="$(curl -sSL "https://github.com/${USERNAME}")"
+          PATTERN="data-count=\"([0-9]+)\" data-date=\"$(date +"%Y-%m-%d")\""
+          if [[ $HTML =~ $PATTERN ]]; then
+            COUNT="${BASH_REMATCH[1]}"
+            if [ "$COUNT" -eq "0" ]; then
+              curl -X POST -H "Content-type: application/json" --data "{\"text\":\"${MESSAGE}\"}" "${WEBHOOL_URL}"
+            else
+              echo "Already ${USERNAME} has ${COUNT} contributions today!"
+              exit 0
+            fi
+          else
+            echo "Failed to determine your contributions count from GitHub."
+            exit 1
+          fi
